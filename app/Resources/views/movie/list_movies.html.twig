@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="posters_container">
+    {% for movie in movies %}
+    
+        <a href="{{ path('movieDetails', {id: movie.id}) }}" class="movie">
+            {# movie.title #}
+
+            {# concaténation twig ! #}
+            <img src="{{ asset('img/posters/small/' ~ movie.imdbId ~ '.jpg') }}" />
+
+        </a>
+
+    {% endfor %}
+    </div>
+
+
+    {{ moviesNumber }}
+
+{% endblock %}
+
+{% block title %}
+Movies !
+{% endblock title %}

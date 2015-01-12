@@ -1,0 +1,20 @@
+body {
+    background-color: #000;
+    color: #FFF;
+}
+
+a.movie {
+    float: left;
+    display: block;
+    width: 214px;
+    height: 310px;
+    overflow: hidden;
+}
+
+a.movie img {
+    opacity: 0.85;
+}
+
+a.movie:hover img {
+    opacity: 1;
+}

@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="posters_container">
+
+        {# concaténation twig ! #}
+        <img src="{{ asset('img/posters/small/' ~ movie.imdbId ~ '.jpg') }}" />
+        <h2>{{ movie.title }}</h2>
+        <p>{{ movie.plot }}</p>
+        <p>Released on: {{ movie.released|date("Y-m-d") }}
+
+    </div>
+
+{% endblock %}
+
+{% block title %}
+{{ movie.title }}
+{% endblock title %}
