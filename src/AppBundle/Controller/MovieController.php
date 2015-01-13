@@ -27,6 +27,21 @@ class MovieController extends Controller
 
         $maxPages = ceil($moviesNumber/$numPerPage);
 
+        //si l'utilisateur a déconné avec l'url...
+        //page trop grande : on le redirige vers la dernière page
+        if ($page > $maxPages){
+            return $this->redirect( 
+                $this->generateUrl( "listMovies", array("page" => $maxPages) ) 
+            );
+        }
+        //à l'inverse, page trop petite : 
+        //si sur la page "0" par exemple...
+        elseif ($page < 1){
+            return $this->redirect( 
+                $this->generateUrl( "listMovies", array("page" => 1) ) 
+            );
+        }
+
         //prépare l'envoi à la vue
         $params = array(
             "currentPage" => $page,
