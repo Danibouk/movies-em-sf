@@ -1,7 +1,20 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+{% if currentPage > 1 %}
+    <a href="{{ path('listMovies', {"page": currentPage-1}) }}">Films précédents</a>
+{% endif %}
+{% if currentPage < maxPages %}
+    <a href="{{ path('listMovies', {"page": currentPage+1}) }}">Films suivants</a>
+{% endif %}
 
+    Affichage des films #{{ (currentPage-1)*numPerPage+1 }} à #
+    {% if numPerPage*currentPage > moviesNumber %}
+        {{ moviesNumber }}
+    {% else %}
+        {{ numPerPage*currentPage }}
+    {% endif %}
+    sur {{ moviesNumber }} films.
     <div class="posters_container">
     {% for movie in movies %}
     
