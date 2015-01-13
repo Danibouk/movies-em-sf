@@ -12,19 +12,13 @@ class MovieController extends Controller
      */
     public function listMoviesAction($page)
     {
-
         $numPerPage = 50;
         $offset = ($page-1)*$numPerPage;
 
         //récupère les films depuis la bdd
         $movieRepo = $this->getDoctrine()->getRepository("AppBundle:Movie");
-        $movies = $movieRepo->findBy(array(), array(
-                    "year" => "DESC",
-                    "title" => "ASC"
-                ), $numPerPage, $offset);
 
         $moviesNumber = $movieRepo->countAll();
-
         $maxPages = ceil($moviesNumber/$numPerPage);
 
         //si l'utilisateur a déconné avec l'url...
@@ -36,11 +30,16 @@ class MovieController extends Controller
         }
         //à l'inverse, page trop petite : 
         //si sur la page "0" par exemple...
-        elseif ($page < 1){
+        elseif ($page < 1){
             return $this->redirect( 
                 $this->generateUrl( "listMovies", array("page" => 1) ) 
             );
         }
+
+        $movies = $movieRepo->findBy(array(), array(
+                    "year" => "DESC",
+                    "title" => "ASC"
+                ), $numPerPage, $offset);
 
         //prépare l'envoi à la vue
         $params = array(
