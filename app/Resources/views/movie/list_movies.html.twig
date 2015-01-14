@@ -3,7 +3,7 @@
 {% block body %}
 
 {# formulaire de filtres par année, en dur par simplicité #}
-<form method="GET" id="filterForm">
+<form method="GET" id="filterForm" action="{{ path('listMovies') }}">
     {% set nowYear = "now"|date("Y") %}
     <select name="minYear">
         {% for i in nowYear..1900 %}
