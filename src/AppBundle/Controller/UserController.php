@@ -128,10 +128,21 @@ class UserController extends Controller
                 ->setFrom(array('movies@movies.com' => "Movies"))
                 ->setTo('gsylvestre@gmail.com')
                 ->setBody($this->renderView("email/forgot_password_email.html.twig", 
-                    array("username" => $username)), "txt/html")
+                    array("username" => $username)), "text/html")
             ;
         $this->get('mailer')->send($message);
 
         return $this->render("user/lost-password-check-email.html.twig");
     }
+
+
+    /**
+     * @Route("/check-email-token/{email}/{token}", name="checkEmailToken")
+     */
+    public function checkEmailTokenAction(){
+
+
+    }   
+
+
 }
