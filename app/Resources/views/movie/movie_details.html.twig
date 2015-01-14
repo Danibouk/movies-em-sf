@@ -5,7 +5,9 @@
     <div class="posters_container">
 
         {# concaténation twig ! #}
-        <img src="{{ asset('img/posters/small/' ~ movie.imdbId ~ '.jpg') }}" />
+        {# <img src="{{ asset('img/posters/small/' ~ movie.imdbId ~ '.jpg') }}" /> #}
+        <img src="{{ movie.poster }}" />
+
         <h2>{{ movie.title }}</h2>
         <p>{{ movie.plot }}</p>
         <p>Released on: {{ movie.released|date("Y-m-d") }}
