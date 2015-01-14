@@ -1,0 +1,49 @@
+
+
+    1. 
+
+        Formulaire avec un seul champ : 
+            l'email 
+
+    2. 
+        Sur soumission, vérifier que l'email existe bel et bien dans notre de donnée
+
+    3.
+        Si l'email existe, on prépare l'envoi d'un message par email : 
+
+            Le message doit contenir un lien que l'utilisateur devra cliquer, pour prouver que c'est bien son mail. 
+
+            Le lien le mène vers notre site. Il contient 2 éléments qui permettent d'identifier le user : son email et son token. 
+
+            Le lien aura cette gueule sur Symfony2 : 
+
+            http://localhost/movies/forgot-password/gsylvestre@gmail.com/j90v2902vj932vj320fq
+
+            @Route("/forgot-password/{email}/{token}", name="forgot-password")
+
+
+        On envoie le message, et on affiche une page qui lui demande d'aller voir ses mails. 
+
+    4. 
+        Lorsque l'utilisateur clique sur lien : 
+
+        On reçoit en paramètre l'email et le token, et on vérifie que l'email et le token correspondent.
+        Si oui, on affiche un formulaire de modification de mot de passe (2x le champ mdp).
+        Si non, on s'inquiète, on redirige l'internaute vers l'accueil ou on affiche un 403. 
+
+
+
+    5. 
+        On vérifie que les 2 mots de passe sont pareils (automatique dans SF), on sauvegarde le nouveau mot de passe (haché), on change le token par sécurité, et on loggue l'utilisateur si on est sympa. Sinon, on le redirige vers la page de login.
+
+
+        
+
+
+
+
+
+
+
+
+
