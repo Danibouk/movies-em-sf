@@ -114,4 +114,21 @@ class UserController extends Controller
 
         return $this->render('user/register.html.twig', $params);
     }
+
+    /**
+     * @Route("/test-email", name="testEmail")
+     */
+    public function testAction(){
+
+        $username = "yo";
+
+        $message = \Swift_Message::newInstance()
+                ->setSubject('Hello Email')
+                ->setFrom(array('matthieu000000@gmail.com' => "Monsieur M"))
+                ->setTo('machinchoseformation@gmail.com')
+                ->setBody($this->renderView("email/forgot_password_email.html.twig", array("username" => $username)), "txt/html")
+            ;
+        $this->get('mailer')->send($message);
+
+    }
 }
