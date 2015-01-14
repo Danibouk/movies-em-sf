@@ -14,7 +14,9 @@
                 <h1>Movies !</h1>
                 <nav>
                     <ul>
+                        {% if app.user %}
                         <li><a href="{{ path('logout') }}">Logout</a></li>
+                        {% endif %}
                     </ul>
                 </nav>
             </header>
