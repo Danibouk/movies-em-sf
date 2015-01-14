@@ -17,21 +17,25 @@ class MovieRepository extends EntityRepository
         $query = $this->createQueryBuilder("m")
                 ->select("m")
                 ->andWhere("m.year >= :minYear")
+                ->andWhere("m.year <= :maxYear")
                 ->setParameter("minYear", $minYear)
+                ->setParameter("maxYear", $maxYear)
+                ->setMaxResults(50)
+                ->setFirstResult(0)
                 ->getQuery();
         
         $movies = $query->getResult();
+        return $movies;
     }
 
-    public function countAll($minYear = 0){
+    public function countAll($minYear, $maxYear){
         $queryBuilder = $this->createQueryBuilder("m")
                         ->select("COUNT(m)");
 
-        if (!empty($minYear)){
-            $queryBuilder->andWhere("m.year >= :minYear");
-            $queryBuilder->setParameter("minYear", $minYear);
-        }
-
+        $queryBuilder->andWhere("m.year >= :minYear");
+        $queryBuilder->setParameter("minYear", $minYear);
+        $queryBuilder->andWhere("m.year <= :maxYear");
+        $queryBuilder->setParameter("maxYear", $maxYear);
         
         $query = $queryBuilder->getQuery();                
 

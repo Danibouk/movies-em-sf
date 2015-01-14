@@ -5,20 +5,26 @@ namespace AppBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
+use Symfony\Component\HttpFoundation\Request;
+
 class MovieController extends Controller
 {
     /**
      * @Route("/{page}", name="listMovies", requirements={"page":"\d+"}, defaults={"page":"1"})
      */
-    public function listMoviesAction($page)
+    public function listMoviesAction(Request $request, $page)
     {
+
+        $minYear = $request->query->get("minYear") ? $request->query->get("minYear") : 1900;
+        $maxYear = $request->query->get("maxYear") ? $request->query->get("maxYear") : date("Y");
+
         $numPerPage = 50;
         $offset = ($page-1)*$numPerPage;
 
         //récupère les films depuis la bdd
         $movieRepo = $this->getDoctrine()->getRepository("AppBundle:Movie");
 
-        $moviesNumber = $movieRepo->countAll();
+        $moviesNumber = $movieRepo->countAll($minYear, $maxYear);
         $maxPages = ceil($moviesNumber/$numPerPage);
 
         //si l'utilisateur a déconné avec l'url...
@@ -36,10 +42,14 @@ class MovieController extends Controller
             );
         }
 
-        $movies = $movieRepo->findBy(array(), array(
+        /*
+        $movies = $movieRepo->findBy(
+                array(), array(
                     "year" => "DESC",
                     "title" => "ASC"
                 ), $numPerPage, $offset);
+        */
+        $movies = $movieRepo->findByYear($minYear, $maxYear);
 
         //prépare l'envoi à la vue
         $params = array(
@@ -47,7 +57,9 @@ class MovieController extends Controller
             "numPerPage" => $numPerPage,
             "maxPages" => $maxPages,
             "movies" => $movies,
-            "moviesNumber" => $moviesNumber
+            "moviesNumber" => $moviesNumber,
+            "minYear" => $minYear,
+            "maxYear" => $maxYear
         );
 
         //envoie la 

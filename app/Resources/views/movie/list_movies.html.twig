@@ -1,11 +1,30 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+
+{# formulaire de filtres par année, en dur par simplicité #}
+<form method="GET" id="filterForm">
+    {% set nowYear = "now"|date("Y") %}
+    <select name="minYear">
+        {% for i in nowYear..1900 %}
+            <option value="{{ i }}" {% if (i == minYear) %}selected="selected"{% endif %}>{{ i }}</option>
+        {% endfor %}
+    </select>
+    <select name="maxYear">
+        {% for i in nowYear..1900 %}
+            <option value="{{ i }}" {% if (i == maxYear) %}selected="selected"{% endif %}>{{ i }}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" value="OK" />
+</form>
+
+
+
 {% if currentPage > 1 %}
-    <a href="{{ path('listMovies', {"page": currentPage-1}) }}">Films précédents</a>
+    <a href="{{ path('listMovies', {"page": currentPage-1, "minYear": minYear, "maxYear": maxYear}) }}">Films précédents</a>
 {% endif %}
 {% if currentPage < maxPages %}
-    <a href="{{ path('listMovies', {"page": currentPage+1}) }}">Films suivants</a>
+    <a href="{{ path('listMovies', {"page": currentPage+1, "minYear": minYear, "maxYear": maxYear}) }}">Films suivants</a>
 {% endif %}
 
     Affichage des films #{{ (currentPage-1)*numPerPage+1 }} à #
