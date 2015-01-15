@@ -80,6 +80,17 @@ class User implements UserInterface
     private $dateModified;
 
 
+
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Movie", mappedBy="users")
+     */
+    private $movies;
+
+
+
+
+
     /**
      * Get id
      *
@@ -279,4 +290,44 @@ class User implements UserInterface
         //rien à faire ici pour notre cas
     }
 
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->movies = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add movies
+     *
+     * @param \AppBundle\Entity\Movie $movies
+     * @return User
+     */
+    public function addMovie(\AppBundle\Entity\Movie $movies)
+    {
+        $this->movies[] = $movies;
+
+        return $this;
+    }
+
+    /**
+     * Remove movies
+     *
+     * @param \AppBundle\Entity\Movie $movies
+     */
+    public function removeMovie(\AppBundle\Entity\Movie $movies)
+    {
+        $this->movies->removeElement($movies);
+    }
+
+    /**
+     * Get movies
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getMovies()
+    {
+        return $this->movies;
+    }
 }

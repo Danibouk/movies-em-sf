@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class RegistrationType extends AbstractType
+class LostPasswordType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -15,15 +15,7 @@ class RegistrationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('username', 'text')
             ->add('email', 'email')
-            ->add('password', 'repeated', array(
-                'type' => 'password',
-                'invalid_message' => 'Les mots de passe doivent correspondre',
-                'options' => array('required' => true),
-                'first_options'  => array('label' => 'Mot de passe'),
-                'second_options' => array('label' => 'Mot de passe (validation)'),
-            ))
             ->add('Inscription !', 'submit')
         ;
     }
@@ -43,6 +35,6 @@ class RegistrationType extends AbstractType
      */
     public function getName()
     {
-        return 'appbundle_registration';
+        return 'appbundle_lost_password';
     }
 }

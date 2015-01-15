@@ -10,6 +10,7 @@ use Symfony\Component\Security\Core\Security;
 
 use AppBundle\Entity\User;
 use AppBundle\Form\RegistrationType;
+use AppBundle\Form\LostPasswordType;
 
 class UserController extends Controller
 {
@@ -120,32 +121,48 @@ class UserController extends Controller
      * Cette page affiche et traite le formulaire où l'on demande son email à l'utilisateur
      * @Route("/forgot-password", name="forgotPassword")
      */
-    public function forgotPasswordAction()
+    public function forgotPasswordAction(Request $request)
     {
 
+        $user = new User();
+        $lostPasswordForm = $this->createForm(new LostPasswordType(), $user);
+
+        $lostPasswordForm->handleRequest( $request );
+
         //si soumis, traiter le formulaire contenant l'email
+        if ($lostPasswordForm->isValid()){
 
             //si l'email existe en base de donnée
+            $userRepo = $this->getDoctrine()->getRepository("AppBundle:User");
+            $foundUser = $userRepo->findOneByEmail( $user->getEmail() );
+
+            if ($foundUser){
 
                 //envoyer un message contenant un lien vers checkEmailToken
                 $message = \Swift_Message::newInstance()
                         ->setCharset("utf-8")
-                        ->setSubject('Hello Email')
+                        ->setSubject('Password reset request')
                         ->setFrom(array('movies@movies.com' => "Movies"))
-                        ->setTo('gsylvestre@gmail.com')
+                        ->setTo( $foundUser->getEmail() )
                         ->setBody($this->renderView("email/forgot_password_email.html.twig", 
-                            array("username" => $username)), "text/html")
+                            array("user" => $foundUser)), "text/html")
                     ;
                 $this->get('mailer')->send($message);
 
                 //le prévenir d'aller lire ses emails
                 return $this->render("user/lost_password_check_email.html.twig");
+            }
+            else {
+                //sinon
 
-            //sinon
+                    //prévenir l'utilisateur de l'erreur
 
-                //prévenir l'utilisateur de l'erreur
+            }
+        }
 
-        return $this->render("user/forgot_password.html.twig");
+        return $this->render("user/forgot_password.html.twig", array(
+            "lostPasswordForm" => $lostPasswordForm->createView()
+        ));
     }  
 
 
@@ -158,7 +175,7 @@ class UserController extends Controller
     {
 
         
-        $userRepo = $this->getDoctrine->getRepository("AppBundle:User");
+        $userRepo = $this->getDoctrine()->getRepository("AppBundle:User");
 
         //faire une requête en bdd pour récupérer l'utilisateur ayant cet email ET ce token
         //** faire bcp de tests pour s'assurer qu'il n'y a pas de faille **
@@ -168,6 +185,15 @@ class UserController extends Controller
         //si l'utilisateur est trouvé
 
             //connecter programmatiquement l'utilisateur trouvé
+            /*
+            $token = new UsernamePasswordToken($user, null, "secured_area", $user->getRoles());
+            $this->get("security.context")->setToken($token); //now the user is logged in
+             
+            //now dispatch the login event
+            $request = $this->get("request");
+            $event = new InteractiveLoginEvent($request, $token);
+            $this->get("event_dispatcher")->dispatch("security.interactive_login", $event);
+            */
 
             //rediriger vers une autre page qui affichera et traitera le formulaire de nouveau mdp
 
