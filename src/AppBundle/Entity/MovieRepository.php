@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
  * MovieRepository
@@ -23,9 +24,9 @@ class MovieRepository extends EntityRepository
                 ->setMaxResults(50)
                 ->setFirstResult(0)
                 ->getQuery();
-        
-        $movies = $query->getResult();
-        return $movies;
+
+        $paginator = new Paginator($query);
+        return $paginator;
     }
 
     public function countAll($minYear, $maxYear){

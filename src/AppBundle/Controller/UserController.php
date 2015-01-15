@@ -136,13 +136,65 @@ class UserController extends Controller
     }
 
 
+
     /**
+     * Cette page affiche et traite le formulaire où l'on demande son email à l'utilisateur
+     * @Route("/forgot-password", name="forgotPassword")
+     */
+    public function forgotPasswordAction()
+    {
+
+        //si soumis, traiter le formulaire contenant l'email
+
+            //si l'email existe en base de donnée
+
+                //envoyer un message contenant un lien vers checkEmailToken
+
+            //sinon
+
+                //prévenir l'utilisateur de l'erreur
+
+        return $this->render("user/forgot_password.html.twig");
+    }  
+
+    /**
+     * L'utilisateur ayant oublié son mdp aboutira sur cette page après avoir cliqué sur le lien reçu par email
+     * Cette page redirige toujours vers une autre page
      * @Route("/check-email-token/{email}/{token}", name="checkEmailToken")
      */
-    public function checkEmailTokenAction(){
+    public function checkEmailTokenAction($email, $token)
+    {
+
+        
+        $userRepo = $this->getDoctrine->getRepository("AppBundle:User");
+
+        //faire une requête en bdd pour récupérer l'utilisateur ayant cet email ET ce token
+        //** faire bcp de tests pour s'assurer qu'il n'y a pas de faille **
+
+        //éventuellement, ralentir volontairement ce code pour limiter les attaques en brute force
+
+        //si l'utilisateur est trouvé
+
+            //connecter programmatiquement l'utilisateur trouvé
+
+            //rediriger vers une autre page qui affichera et traitera le formulaire de nouveau mdp
+
+        //sinon
+
+            //le rediriger vers l'accueil ou vers un site pour mécréant
 
 
     }   
+
+    /**
+     * Cette page affiche et traite le formulaire de changement de mot de passe
+     * L'utilisateur doit être connecté pour y accéder
+     * Route("/change-password", name="changePassword")
+     */
+    public function changePasswordAction(){
+
+        return $this->render("user/change_password.html.twig");
+    }
 
 
 }

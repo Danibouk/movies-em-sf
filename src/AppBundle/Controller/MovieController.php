@@ -50,6 +50,7 @@ class MovieController extends Controller
                 ), $numPerPage, $offset);
         */
         $movies = $movieRepo->findByYear($minYear, $maxYear);
+        $moviesNumber = count($movies);
 
         //prépare l'envoi à la vue
         $params = array(
