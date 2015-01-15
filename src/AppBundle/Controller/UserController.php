@@ -115,27 +115,6 @@ class UserController extends Controller
         return $this->render('user/register.html.twig', $params);
     }
 
-    /**
-     * @Route("/test-email", name="testEmail")
-     */
-    public function testAction(){
-
-        $username = "yo";
-
-        $message = \Swift_Message::newInstance()
-                ->setCharset("utf-8")
-                ->setSubject('Hello Email')
-                ->setFrom(array('movies@movies.com' => "Movies"))
-                ->setTo('gsylvestre@gmail.com')
-                ->setBody($this->renderView("email/forgot_password_email.html.twig", 
-                    array("username" => $username)), "text/html")
-            ;
-        $this->get('mailer')->send($message);
-
-        return $this->render("user/lost-password-check-email.html.twig");
-    }
-
-
 
     /**
      * Cette page affiche et traite le formulaire où l'on demande son email à l'utilisateur
@@ -149,6 +128,18 @@ class UserController extends Controller
             //si l'email existe en base de donnée
 
                 //envoyer un message contenant un lien vers checkEmailToken
+                $message = \Swift_Message::newInstance()
+                        ->setCharset("utf-8")
+                        ->setSubject('Hello Email')
+                        ->setFrom(array('movies@movies.com' => "Movies"))
+                        ->setTo('gsylvestre@gmail.com')
+                        ->setBody($this->renderView("email/forgot_password_email.html.twig", 
+                            array("username" => $username)), "text/html")
+                    ;
+                $this->get('mailer')->send($message);
+
+                //le prévenir d'aller lire ses emails
+                return $this->render("user/lost_password_check_email.html.twig");
 
             //sinon
 
@@ -156,6 +147,7 @@ class UserController extends Controller
 
         return $this->render("user/forgot_password.html.twig");
     }  
+
 
     /**
      * L'utilisateur ayant oublié son mdp aboutira sur cette page après avoir cliqué sur le lien reçu par email
@@ -185,6 +177,7 @@ class UserController extends Controller
 
 
     }   
+
 
     /**
      * Cette page affiche et traite le formulaire de changement de mot de passe
