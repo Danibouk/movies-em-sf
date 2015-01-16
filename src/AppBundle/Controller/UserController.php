@@ -219,7 +219,7 @@ class UserController extends Controller
      */
     public function changePasswordAction(Request $request)
     {
-        //from session
+        //récupère le user loggué depuis la session
         $user = $this->getUser();
 
         $changePasswordForm = $this->createForm(new ChangePasswordType(), $user);
@@ -236,6 +236,7 @@ class UserController extends Controller
             $encoded = $encoder->encodePassword( $user, $user->getPassword() );
             $user->setPassword( $encoded );
 
+            //on change la dernière date de modif
             $user->setDateModified( new \DateTime() );
 
             //sauvegarde le User en bdd
@@ -243,7 +244,7 @@ class UserController extends Controller
             $em->persist( $user );
             $em->flush();
 
-            $this->addFlash("New password saved !", "success");
+            $this->addFlash("success", "New password saved !");
 
             return $this->redirect( $this->generateUrl("listMovies") );
 
