@@ -85,11 +85,11 @@ class UserController extends Controller
             //hydrate les autres propriétés de notre User
 
             //générer un salt
-            $salt = md5(uniqid());
+            $salt = $this->get('string_helper')->randomString(50);
             $user->setSalt( $salt );
 
             //générer un token
-            $token = md5(uniqid());
+            $token = $this->get('string_helper')->randomString(30);
             $user->setToken( $token );
 
             //hacher le mot de passe
@@ -106,7 +106,7 @@ class UserController extends Controller
             $user->setRoles( array("ROLE_USER") );
 
             //sauvegarde le User en bdd
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->get("doctrine")->getManager();
             $em->persist( $user );
             $em->flush();
 
@@ -180,12 +180,13 @@ class UserController extends Controller
      */
     public function checkEmailTokenAction($email, $token)
     {
-
-        
+ 
         //faire une requête en bdd pour récupérer l'utilisateur ayant cet email ET ce token
         $userRepo = $this->getDoctrine()->getRepository("AppBundle:User");
-        $userFound= $userRepo->findOneBy(array("email" => $email, "token" => $token));
-        
+        $userFound= $userRepo->findOneBy(
+            array("email" => $email, "token" => $token)
+        );
+
         //** faire bcp de tests pour s'assurer qu'il n'y a pas de faille **
 
         //éventuellement, ralentir volontairement ce code pour limiter les attaques en brute force
@@ -231,7 +232,7 @@ class UserController extends Controller
         if ($changePasswordForm->isValid()){
 
             //générer un nouveau token
-            $token = md5(uniqid());
+            $token = $this->get('string_helper')->randomString(30);
             $user->setToken( $token );
 
             //hacher le mot de passe
