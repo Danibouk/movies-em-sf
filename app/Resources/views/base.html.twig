@@ -25,6 +25,20 @@
                 </nav>
             </header>
 
+            {# Affiche les flash messages de type "error" #}
+            {% for flashMessage in app.session.flashbag.get('error') %}
+                <div class="alert alert-danger">
+                    {{ flashMessage }}
+                </div>
+            {% endfor %}
+
+            {# Affiche les flash messages de type "success" #}
+            {% for flashMessage in app.session.flashbag.get('success') %}
+                <div class="alert alert-success">
+                    {{ flashMessage }}
+                </div>
+            {% endfor %}
+
             {% block body %}{% endblock %}
 
             <footer>

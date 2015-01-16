@@ -42,14 +42,7 @@ class MovieController extends Controller
             );
         }
 
-        /*
-        $movies = $movieRepo->findBy(
-                array(), array(
-                    "year" => "DESC",
-                    "title" => "ASC"
-                ), $numPerPage, $offset);
-        */
-        $movies = $movieRepo->findByYear($minYear, $maxYear);
+        $movies = $movieRepo->findByYear($minYear, $maxYear, $numPerPage, $offset);
         $moviesNumber = count($movies);
 
         //prépare l'envoi à la vue

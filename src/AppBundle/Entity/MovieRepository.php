@@ -14,15 +14,15 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 class MovieRepository extends EntityRepository
 {
 
-    public function findByYear($minYear, $maxYear){
+    public function findByYear($minYear, $maxYear, $numPerPage = 50, $offset = 0){
         $query = $this->createQueryBuilder("m")
                 ->select("m")
                 ->andWhere("m.year >= :minYear")
                 ->andWhere("m.year <= :maxYear")
                 ->setParameter("minYear", $minYear)
                 ->setParameter("maxYear", $maxYear)
-                ->setMaxResults(50)
-                ->setFirstResult(0)
+                ->setMaxResults($numPerPage)
+                ->setFirstResult($offset)
                 ->getQuery();
 
         $paginator = new Paginator($query);

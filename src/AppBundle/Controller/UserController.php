@@ -11,6 +11,10 @@ use Symfony\Component\Security\Core\Security;
 use AppBundle\Entity\User;
 use AppBundle\Form\RegistrationType;
 use AppBundle\Form\LostPasswordType;
+use AppBundle\Form\ChangePasswordType;
+
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
 class UserController extends Controller
 {
@@ -178,29 +182,32 @@ class UserController extends Controller
         $userRepo = $this->getDoctrine()->getRepository("AppBundle:User");
 
         //faire une requête en bdd pour récupérer l'utilisateur ayant cet email ET ce token
+        $userFound= $userRepo->findOneBy(array("email" => $email, "token" => $token));
         //** faire bcp de tests pour s'assurer qu'il n'y a pas de faille **
 
         //éventuellement, ralentir volontairement ce code pour limiter les attaques en brute force
+        sleep(1);
 
         //si l'utilisateur est trouvé
+        if ($userFound){
 
             //connecter programmatiquement l'utilisateur trouvé
-            /*
-            $token = new UsernamePasswordToken($user, null, "secured_area", $user->getRoles());
+            
+            $token = new UsernamePasswordToken($userFound, null, "secured_area", $userFound->getRoles());
             $this->get("security.context")->setToken($token); //now the user is logged in
              
             //now dispatch the login event
             $request = $this->get("request");
             $event = new InteractiveLoginEvent($request, $token);
             $this->get("event_dispatcher")->dispatch("security.interactive_login", $event);
-            */
 
             //rediriger vers une autre page qui affichera et traitera le formulaire de nouveau mdp
+            return $this->redirect($this->generateUrl("changePassword"));
 
+        }
         //sinon
-
-            //le rediriger vers l'accueil ou vers un site pour mécréant
-
+        //le rediriger vers l'accueil ou vers un site pour mécréant
+        return $this->redirect( $this->generateUrl("listMovies") );
 
     }   
 
@@ -208,11 +215,41 @@ class UserController extends Controller
     /**
      * Cette page affiche et traite le formulaire de changement de mot de passe
      * L'utilisateur doit être connecté pour y accéder
-     * Route("/change-password", name="changePassword")
+     * @Route("/change-password", name="changePassword")
      */
-    public function changePasswordAction(){
+    public function changePasswordAction(Request $request)
+    {
+        //from session
+        $user = $this->getUser();
 
-        return $this->render("user/change_password.html.twig");
+        $changePasswordForm = $this->createForm(new ChangePasswordType(), $user);
+        $changePasswordForm->handleRequest($request);
+
+        if ($changePasswordForm->isValid()){
+
+            //générer un nouveau token
+            $token = md5(uniqid());
+            $user->setToken( $token );
+
+            //hacher le mot de passe
+            $encoder = $this->get('security.password_encoder');
+            $encoded = $encoder->encodePassword( $user, $user->getPassword() );
+            $user->setPassword( $encoded );
+
+            $user->setDateModified( new \DateTime() );
+
+            //sauvegarde le User en bdd
+            $em = $this->getDoctrine()->getManager();
+            $em->persist( $user );
+            $em->flush();
+
+            $this->addFlash("New password saved !", "success");
+
+            return $this->redirect( $this->generateUrl("listMovies") );
+
+        }
+
+        return $this->render("user/change_password.html.twig", array("changePasswordForm" => $changePasswordForm->createView()));
     }
 
 
