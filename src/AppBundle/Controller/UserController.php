@@ -127,10 +127,13 @@ class UserController extends Controller
      */
     public function forgotPasswordAction(Request $request)
     {
-
+        //entité vide, juste pour l'associer au form
         $user = new User();
+
+        //crée le form
         $lostPasswordForm = $this->createForm(new LostPasswordType(), $user);
 
+        //injecte les données postées dans notre $user
         $lostPasswordForm->handleRequest( $request );
 
         //si soumis, traiter le formulaire contenant l'email
@@ -140,6 +143,7 @@ class UserController extends Controller
             $userRepo = $this->getDoctrine()->getRepository("AppBundle:User");
             $foundUser = $userRepo->findOneByEmail( $user->getEmail() );
 
+            //si on a trouvé le user en bdd
             if ($foundUser){
 
                 //envoyer un message contenant un lien vers checkEmailToken
@@ -156,11 +160,10 @@ class UserController extends Controller
                 //le prévenir d'aller lire ses emails
                 return $this->render("user/lost_password_check_email.html.twig");
             }
+            //sinon, utilisateur non trouvé....
             else {
-                //sinon
-
-                    //prévenir l'utilisateur de l'erreur
-
+                //prévenir l'utilisateur de l'erreur
+                $this->addFlash("error", "This email is not registered here.");
             }
         }
 
@@ -179,10 +182,10 @@ class UserController extends Controller
     {
 
         
-        $userRepo = $this->getDoctrine()->getRepository("AppBundle:User");
-
         //faire une requête en bdd pour récupérer l'utilisateur ayant cet email ET ce token
+        $userRepo = $this->getDoctrine()->getRepository("AppBundle:User");
         $userFound= $userRepo->findOneBy(array("email" => $email, "token" => $token));
+        
         //** faire bcp de tests pour s'assurer qu'il n'y a pas de faille **
 
         //éventuellement, ralentir volontairement ce code pour limiter les attaques en brute force
